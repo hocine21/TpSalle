@@ -31,6 +31,15 @@ public class UtilisateurService {
         return utilisateurRepository.save(utilisateur);
     }
 
+    // Méthode d'authentification
+    public boolean authentifierUtilisateur(String email, String motDePasse) {
+        Utilisateur utilisateur = utilisateurRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Utilisateur non trouvé"));
+
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        return passwordEncoder.matches(motDePasse, utilisateur.getMotDePasse());
+    }
+
     // Méthode de validation du mot de passe avec une regex
     private boolean isMotDePasseValide(String motDePasse) {
         // Exemple de regex pour un mot de passe :
