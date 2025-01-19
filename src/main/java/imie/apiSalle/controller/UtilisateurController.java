@@ -2,53 +2,54 @@ package imie.apiSalle.controller;
 
 import imie.apiSalle.model.Utilisateur;
 import imie.apiSalle.service.UtilisateurService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.servlet.http.HttpSession; // Correct import pour Jakarta EE
+import java.util.List;
 
 @RestController
-@RequestMapping("/api/utilisateurs")
+@RequestMapping("/utilisateurs")
 public class UtilisateurController {
 
-    @Autowired
-    private UtilisateurService utilisateurService;
+    private final UtilisateurService utilisateurService;
 
-    // Méthode pour créer un utilisateur
-    @PostMapping("/creer")
-    public ResponseEntity<Utilisateur> creerUtilisateur(@RequestBody Utilisateur utilisateur) {
-        Utilisateur utilisateurCree = utilisateurService.creerUtilisateur(utilisateur);
-        return ResponseEntity.status(HttpStatus.CREATED).body(utilisateurCree);
+    public UtilisateurController(UtilisateurService utilisateurService) {
+        this.utilisateurService = utilisateurService;
     }
 
-    // Méthode pour se connecter et créer une session
-    @PostMapping("/connexion")
-    public ResponseEntity<String> connexionUtilisateur(@RequestBody Utilisateur utilisateur, HttpSession session) {
-        try {
-            boolean estAuthentifie = utilisateurService.authentifierUtilisateur(utilisateur.getEmail(), utilisateur.getMotDePasse());
-            if (estAuthentifie) {
-                // Ajouter l'utilisateur à la session
-                session.setAttribute("utilisateur", utilisateur);
-                return ResponseEntity.status(HttpStatus.OK).body("Connexion réussie");
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Identifiants incorrects");
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erreur lors de la connexion");
+    @PostMapping("/register")
+    public ResponseEntity<Utilisateur> createUtilisateur(@RequestBody Utilisateur utilisateur) {
+        return ResponseEntity.ok(utilisateurService.creerUtilisateur(utilisateur));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestParam String email, @RequestParam String motDePasse) {
+        boolean isAuthenticated = utilisateurService.authentifierUtilisateur(email, motDePasse);
+        if (isAuthenticated) {
+            return ResponseEntity.ok("Connexion réussie");
+        } else {
+            return ResponseEntity.status(401).body("Email ou mot de passe incorrect");
         }
     }
 
-    // Méthode pour se déconnecter et invalider la session
-    @PostMapping("/deconnexion")
-    public ResponseEntity<String> deconnexionUtilisateur(HttpSession session) {
-        try {
-            // Invalider la session pour déconnecter l'utilisateur
-            session.invalidate();
-            return ResponseEntity.status(HttpStatus.OK).body("Déconnexion réussie");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erreur lors de la déconnexion");
-        }
+    @GetMapping
+    public ResponseEntity<List<Utilisateur>> getAllUtilisateurs() {
+        return ResponseEntity.ok(utilisateurService.getAllUtilisateurs());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Utilisateur> getUtilisateurById(@PathVariable Integer id) {
+        return ResponseEntity.ok(utilisateurService.getUtilisateurById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Utilisateur> updateUtilisateur(@PathVariable Integer id, @RequestBody Utilisateur utilisateur) {
+        return ResponseEntity.ok(utilisateurService.updateUtilisateur(id, utilisateur));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUtilisateur(@PathVariable Integer id) {
+        utilisateurService.deleteUtilisateur(id);
+        return ResponseEntity.noContent().build();
     }
 }

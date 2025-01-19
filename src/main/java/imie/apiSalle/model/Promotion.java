@@ -1,29 +1,47 @@
 package imie.apiSalle.model;
 
-import jakarta.persistence.*;
-import lombok.Data;
-
-import java.util.Date;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
 @Entity
-@Table(name = "PROMOTION")
-@Data
 public class Promotion {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID_PROMOTION")
     private Integer idPromotion;
-
-    @Column(name = "NOM_PROMOTION", nullable = false, length = 20)
     private String nomPromotion;
-
-    @Column(name = "NMBR_ETUDIANT", nullable = false)
     private Integer nmbrEtudiant;
+    private String anneeScolaire;
 
-    @Column(name = "ANNEE_SCOLAIRE", nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date anneeScolaire;
+    // Getters and Setters
+    public Integer getIdPromotion() {
+        return idPromotion;
+    }
 
-    // Lombok @Data génère les getters, setters, equals, hashCode et toString
+    public void setIdPromotion(Integer idPromotion) {
+        this.idPromotion = idPromotion;
+    }
+
+    public String getNomPromotion() {
+        return nomPromotion;
+    }
+
+    public void setNomPromotion(String nomPromotion) {
+        this.nomPromotion = nomPromotion;
+    }
+
+    public Integer getNmbrEtudiant() {
+        return nmbrEtudiant;
+    }
+
+    public void setNmbrEtudiant(Integer nmbrEtudiant) {
+        this.nmbrEtudiant = nmbrEtudiant;
+    }
+
+    public String getAnneeScolaire() {
+        return anneeScolaire;
+    }
+
+    public void setAnneeScolaire(String anneeScolaire) {
+        this.anneeScolaire = anneeScolaire;
+    }
 }

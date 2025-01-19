@@ -29,11 +29,13 @@ public class PromotionController {
 
     @PostMapping
     public Promotion createPromotion(@RequestBody Promotion promotion) {
+        // Le champ anneeScolaire est maintenant un String, donc il sera géré correctement
         return promotionService.createPromotion(promotion);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Promotion> updatePromotion(@PathVariable Integer id, @RequestBody Promotion promotionDetails) {
+        // Mise à jour de la promotion, y compris le champ anneeScolaire
         return ResponseEntity.ok(promotionService.updatePromotion(id, promotionDetails));
     }
 

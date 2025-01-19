@@ -4,7 +4,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 @Configuration
 public class SecurityConfig {
@@ -12,23 +11,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf().disable()
-            .authorizeHttpRequests()
-            // Autoriser toutes les demandes pour ces routes
-            .requestMatchers("/api/utilisateurs/connexion", "/api/utilisateurs/creer", "/api/utilisateurs/deconnexion").permitAll()
-            // Restreindre les accès aux rôles spécifiques
-            .requestMatchers("/api/promotions/**").hasRole("PROFS")
-            .anyRequest().authenticated()
-            .and()
-            .sessionManagement()
-            .maximumSessions(1); // Un utilisateur ne peut avoir qu'une session active
+            .csrf(csrf -> csrf.disable())  // Désactive CSRF pour permettre les requêtes POST
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/utilisateurs/**", "/api/**").permitAll()  // Autoriser tous les endpoints utilisateurs et API
+                .anyRequest().authenticated()  // Protéger tout le reste
+            )
+            .formLogin(login -> login.disable())  // Désactive la page de login par défaut
+            .httpBasic(basic -> basic.disable());  // Désactive l'authentification basique
 
         return http.build();
-    }
-
-    // Gère les événements de session, par exemple pour invalider les sessions expirées
-    @Bean
-    public HttpSessionEventPublisher httpSessionEventPublisher() {
-        return new HttpSessionEventPublisher();
     }
 }
