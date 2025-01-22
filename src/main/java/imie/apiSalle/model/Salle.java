@@ -1,11 +1,14 @@
 package imie.apiSalle.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 @Entity
 @Table(name = "SALLE")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Salle {
 
     @Id
@@ -24,6 +27,4 @@ public class Salle {
 
     @Column(name = "TYPE_SALLE", nullable = false, length = 20)
     private String typeSalle;
-
-    // Constructeurs, getters et setters peuvent être générés par Lombok (@Data)
 }

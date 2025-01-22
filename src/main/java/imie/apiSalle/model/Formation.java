@@ -1,11 +1,14 @@
 package imie.apiSalle.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 @Entity
 @Table(name = "FORMATION")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Formation {
 
     @Id
@@ -15,6 +18,4 @@ public class Formation {
 
     @Column(name = "NOM_FORMATION", nullable = false, length = 50)
     private String nomFormation;
-
-    // Les constructeurs, getters et setters sont générés par Lombok grâce à l'annotation @Data
 }
