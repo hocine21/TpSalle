@@ -3,37 +3,50 @@ package imie.apiSalle.controller;
 import imie.apiSalle.model.UtilisateurFormation;
 import imie.apiSalle.model.UtilisateurFormationId;
 import imie.apiSalle.service.UtilisateurFormationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/formations")
+@RequestMapping("/utilisateurFormation")
 public class UtilisateurFormationController {
 
-    private final UtilisateurFormationService service;
+    @Autowired
+    private UtilisateurFormationService service;
 
-    public UtilisateurFormationController(UtilisateurFormationService service) {
-        this.service = service;
+    @GetMapping
+    public List<UtilisateurFormation> getAll() {
+        return service.findAll();
     }
 
-    @GetMapping("/recurrence")
-    public ResponseEntity<List<UtilisateurFormation>> getRecurringFormations() {
-        return ResponseEntity.ok(service.getRecurrentFormations());
+    @GetMapping("/{numSalle}/{idPromotion}/{idFormation}")
+    public ResponseEntity<UtilisateurFormation> getById(
+            @PathVariable Integer numSalle,
+            @PathVariable Integer idPromotion,
+            @PathVariable Integer idFormation) {
+        
+        UtilisateurFormationId id = new UtilisateurFormationId(numSalle, idPromotion, idFormation);
+        return service.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<UtilisateurFormation> createFormation(@RequestBody UtilisateurFormation formation) {
-        return ResponseEntity.ok(service.saveFormation(formation));
+    public UtilisateurFormation create(@RequestBody UtilisateurFormation utilisateurFormation) {
+        return service.save(utilisateurFormation);
     }
 
     @DeleteMapping("/{numSalle}/{idPromotion}/{idFormation}")
-    public ResponseEntity<Void> deleteFormation(@PathVariable Integer numSalle,
-                                                @PathVariable Integer idPromotion,
-                                                @PathVariable Integer idFormation) {
+    public ResponseEntity<Void> delete(
+            @PathVariable Integer numSalle,
+            @PathVariable Integer idPromotion,
+            @PathVariable Integer idFormation) {
+        
         UtilisateurFormationId id = new UtilisateurFormationId(numSalle, idPromotion, idFormation);
-        service.deleteFormation(id);
+        service.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 }
